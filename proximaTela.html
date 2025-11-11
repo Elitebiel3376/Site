@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verificação Anti-Robô</title>
+<style>
+  body {
+    background-color: #0b0014;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+  }
+  .captcha-box {
+    background: #1a001f;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 40px #00ffcc, 0 0 80px #00ffcc;
+    width: 350px;
+    text-align: center;
+  }
+  button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    border: none;
+    background-color: #00ffcc;
+    color: #0b0014;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
+    transition: 0.3s;
+  }
+  button:hover {
+    box-shadow: 0 0 25px #ff00ff, 0 0 50px #00ffcc;
+  }
+  #message {
+    margin-top: 15px;
+    font-size: 16px;
+    min-height: 24px;
+    color: #ff4444;
+    animation: flash 1s infinite alternate;
+  }
+  @keyframes flash {
+    0% { text-shadow: 0 0 5px #ff4444, 0 0 10px #ff4444; }
+    50% { text-shadow: 0 0 10px #ff4444, 0 0 20px #ff4444; }
+    100% { text-shadow: 0 0 5px #ff4444, 0 0 10px #ff4444; }
+  }
+</style>
+</head>
+<body>
+  <div class="captcha-box">
+    <h2>Verificação Anti-Robô</h2>
+    <p>Marque a caixa abaixo para confirmar que você não é um robô</p>
+    <input type="checkbox" id="captcha"> Não sou um robô
+    <br>
+    <button onclick="checkCaptcha()">Verificar</button>
+    <div id="message"></div>
+  </div>
+
+<script>
+let attempts = 0;
+
+function checkCaptcha() {
+  const checkbox = document.getElementById('captcha');
+  const message = document.getElementById('message');
+
+  if(!checkbox.checked) {
+    message.textContent = "❌ Você precisa marcar a caixa!";
+    return;
+  }
+
+  attempts++;
+  if(attempts < 3) {
+    message.textContent = `❌ Erro de verificação! Tente novamente (${attempts}/2)`;
+    checkbox.checked = false;
+  } else {
+    // Libera acesso após 2 erros
+    message.style.color = "#00ffcc";
+    message.textContent = "✅ Verificação concluída! Redirecionando...";
+    setTimeout(() => {
+      window.location.href = "proximaTelaFinal.html";
+    }, 1500);
+  }
+}
+</script>
+</body>
+</html>

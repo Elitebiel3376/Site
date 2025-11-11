@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Neon Mini-Jogo</title>
+<style>
+  body {
+    background-color: #0b0014;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .login-box {
+    background: #1a001f;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 40px #ff00ff, 0 0 80px #ff00ff, 0 0 120px #ff00ff;
+    width: 350px;
+    text-align: center;
+    position: relative;
+    transition: box-shadow 0.3s;
+  }
+  input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: none;
+    font-size: 16px;
+    background: #2a001f;
+    color: white;
+  }
+  button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    background-color: #ff00ff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff, 0 0 45px #ff00ff;
+    transition: 0.2s;
+  }
+  button:hover {
+    box-shadow: 0 0 25px #00ffff, 0 0 50px #ff00ff, 0 0 75px #00ff00;
+  }
+  #message {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #ff00ff;
+    min-height: 24px;
+    animation: neon 1s infinite alternate;
+  }
+  @keyframes neon {
+    0% { text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+    50% { text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff; }
+    100% { text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+  }
+</style>
+</head>
+<body>
+  <div class="login-box" id="box">
+    <h2>Login Neon Mini-Jogo</h2>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <button onclick="validatePassword()">Entrar</button>
+    <div id="message"></div>
+  </div>
+
+<script>
+let step = 0;
+const body = document.body;
+const box = document.getElementById('box');
+
+// 36 validações
+const validations = [
+  { check: pw => pw.length >= 5, message: "❌ Precisa ter no mínimo 5 caracteres" },
+  { check: pw => /\p{Emoji}/u.test(pw), message: "❌ Precisa ter pelo menos 1 emoji" },
+  { check: pw => /\d/.test(pw), message: "❌ Precisa conter pelo menos 1 número" },
+  { check: pw => /[A-Z]/.test(pw), message: "❌ Precisa conter 1 letra maiúscula" },
+  { check: pw => /[a-z]/.test(pw), message: "❌ Precisa conter 1 letra minúscula" },
+  { check: pw => /[!@#$%^&*]/.test(pw), message: "❌ Precisa conter 1 caractere especial (!@#$%^&*)" },
+  { check: pw => pw.length >= 8, message: "❌ Precisa ter no mínimo 8 caracteres" },
+  { check: pw => !/\s/.test(pw), message: "❌ Não pode conter espaços" },
+  { check: pw => /[aeiou]/i.test(pw), message: "❌ Precisa conter uma vogal" },
+  { check: pw => /[bcdfghjklmnpqrstvwxyz]/i.test(pw), message: "❌ Precisa conter uma consoante" },
+  { check: pw => pw.includes("@"), message: "❌ Precisa conter @" },
+  { check: pw => pw.includes("#"), message: "❌ Precisa conter #" },
+  { check: pw => pw.includes("$"), message: "❌ Precisa conter $" },
+  { check: pw => pw.includes("%"), message: "❌ Precisa conter %" },
+  { check: pw => pw.includes("&"), message: "❌ Precisa conter &" },
+  { check: pw => pw.length <= 15, message: "❌ Não pode ter mais de 15 caracteres" },
+  { check: pw => /[A-Z]/.test(pw) && /[a-z]/.test(pw), message: "❌ Precisa de mistura de maiúsculas e minúsculas" },
+  { check: pw => /\d$/.test(pw), message: "❌ Último caractere precisa ser número" },
+  { check: pw => !pw.includes("123"), message: "❌ Não pode conter 123" },
+  { check: pw => !pw.includes("abc"), message: "❌ Não pode conter abc" },
+  { check: pw => pw.length % 2 === 0, message: "❌ Precisa ter número par de caracteres" },
+  { check: pw => pw[0] !== pw[pw.length-1], message: "❌ Primeiro e último caractere não podem ser iguais" },
+  { check: pw => /[!@#\$%\^&\*]/.test(pw), message: "❌ Precisa conter pelo menos 1 símbolo" },
+  { check: pw => pw.match(/./g).length > 0, message: "❌ Senha não pode estar vazia" },
+  { check: pw => pw.includes("🌟"), message: "❌ Precisa conter o emoji 🌟" },
+  { check: pw => pw.length >= 10, message: "❌ Precisa ter no mínimo 10 caracteres" },
+  { check: pw => /\d{2}/.test(pw), message: "❌ Precisa conter pelo menos 2 números seguidos" },
+  { check: pw => pw.includes("!"), message: "❌ Precisa conter !" },
+  { check: pw => pw.includes("?"), message: "❌ Precisa conter ?" },
+  { check: pw => pw.includes("."), message: "❌ Precisa conter ." },
+  { check: pw => pw.includes(","), message: "❌ Precisa conter ," },
+  { check: pw => pw.includes("-"), message: "❌ Precisa conter -" },
+  { check: pw => pw.includes("_"), message: "❌ Precisa conter _" },
+  { check: pw => pw.includes("+"), message: "❌ Precisa conter +" },
+  { check: pw => pw.includes("="), message: "❌ Precisa conter =" },
+  { check: pw => /\d/.test(pw) && /[A-Z]/.test(pw) && /\p{Emoji}/u.test(pw), message: "❌ Precisa conter número, letra maiúscula e emoji" },
+  { check: pw => pw.includes("💜"), message: "❌ Precisa conter o emoji 💜" },
+  { check: pw => true, message: "✅ Tudo certo! Preparando animação final..." }
+];
+
+function validatePassword() {
+  const password = document.getElementById('password').value;
+  const message = document.getElementById('message');
+
+  const validation = validations[step];
+  if(!validation.check(password)) {
+    message.textContent = validation.message;
+    flashScreen();
+    return;
+  }
+
+  step++;
+  const nextValidation = validations[step];
+  message.textContent = nextValidation.message;
+  flashScreen();
+
+  if(step === validations.length - 1) {
+    finalAnimation();
+  }
+}
+
+function flashScreen() {
+  body.style.backgroundColor = "#1a001f";
+  box.style.boxShadow = "0 0 60px #ff00ff, 0 0 100px #ff00ff, 0 0 140px #ff00ff";
+  setTimeout(() => {
+    body.style.backgroundColor = "#0b0014";
+    box.style.boxShadow = "0 0 40px #ff00ff, 0 0 80px #ff00ff, 0 0 120px #ff00ff";
+  }, 200);
+}
+
+function finalAnimation() {
+  let count = 3;
+  const message = document.getElementById('message');
+  const interval = setInterval(() => {
+    message.textContent = `✅ Tudo certo! Redirecionando em ${count}...`;
+    box.style.boxShadow = `0 0 ${30 + count*10}px #00ffff, 0 0 ${60 + count*10}px #ff00ff, 0 0 ${90 + count*10}px #00ff00`;
+    count--;
+    if(count < 0) {
+      clearInterval(interval);
+      window.location.href = "proximaTela.html";
+    }
+  }, 1000);
+}
+</script>
+</body>
+</html>

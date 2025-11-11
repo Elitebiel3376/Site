@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senha Inválida</title>
+<style>
+  body {
+    background-color: #0b0014;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .error-box {
+    background: #1a001f;
+    padding: 50px;
+    border-radius: 12px;
+    box-shadow: 0 0 40px #ff4444, 0 0 80px #ff4444;
+    text-align: center;
+    width: 450px;
+    animation: shake 0.5s;
+  }
+
+  h1 {
+    color: #ff4444;
+    text-shadow: 0 0 5px #ff4444, 0 0 10px #ff4444;
+  }
+
+  p {
+    font-size: 16px;
+    margin-top: 10px;
+    animation: neon 1s infinite alternate;
+    color: #ff7777;
+  }
+
+  button {
+    margin-top: 30px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    border: none;
+    background-color: #ff4444;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 0 15px #ff4444, 0 0 30px #ff4444;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    box-shadow: 0 0 25px #ff00ff, 0 0 50px #ff4444;
+  }
+
+  @keyframes neon {
+    0% { text-shadow: 0 0 5px #ff4444, 0 0 10px #ff4444; }
+    50% { text-shadow: 0 0 15px #ff4444, 0 0 30px #ff4444; }
+    100% { text-shadow: 0 0 5px #ff4444, 0 0 10px #ff4444; }
+  }
+
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+  }
+</style>
+</head>
+<body>
+  <div class="error-box">
+    <h1>❌ Senha Inválida!</h1>
+    <p>A senha que você inseriu não está apta para o nosso sistema ou viola as restrições de segurança.</p>
+    <button onclick="goBack()">Voltar para Login</button>
+  </div>
+
+<script>
+function goBack() {
+  window.location.href = "Index.html"; // Redireciona para a tela de login
+}
+</script>
+</body>
+</html>
