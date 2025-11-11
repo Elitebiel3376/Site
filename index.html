@@ -80,7 +80,7 @@
 const body = document.body;
 const box = document.getElementById('box');
 
-// Lista de 36 validações (mantive as mesmas regras que você tinha)
+// Lista de 36 validações
 const validations = [
   { check: pw => pw.length >= 5, message: "❌ Precisa ter no mínimo 5 caracteres" },
   { check: pw => /\p{Emoji}/u.test(pw), message: "❌ Precisa ter pelo menos 1 emoji" },
@@ -97,7 +97,7 @@ const validations = [
   { check: pw => pw.includes("$"), message: "❌ Precisa conter $" },
   { check: pw => pw.includes("%"), message: "❌ Precisa conter %" },
   { check: pw => pw.includes("&"), message: "❌ Precisa conter &" },
-  { check: pw => pw.length <= 15, message: "❌ Não pode ter mais de 15 caracteres" },
+  { check: pw => pw.length <= 25, message: "❌ Não pode ter mais de 25 caracteres" }, // Aumentei o limite
   { check: pw => /[A-Z]/.test(pw) && /[a-z]/.test(pw), message: "❌ Precisa de mistura de maiúsculas e minúsculas" },
   { check: pw => /\d$/.test(pw), message: "❌ Último caractere precisa ser número" },
   { check: pw => !pw.includes("123"), message: "❌ Não pode conter 123" },
@@ -121,29 +121,23 @@ const validations = [
   { check: pw => pw.includes("💜"), message: "❌ Precisa conter o emoji 💜" }
 ];
 
-// Função principal: encontra a primeira validação NÃO satisfeita.
-// Se nenhuma falhar -> sucesso
 function validatePassword() {
   const password = document.getElementById('password').value || "";
   const message = document.getElementById('message');
 
-  // encontra índice da primeira regra não satisfeita
   const firstFailIndex = validations.findIndex(v => !v.check(password));
 
   if (firstFailIndex === -1) {
-    // todas satisfeitas -> animação final / redireciona
     message.style.color = "#00ffcc";
     finalAnimation();
     return;
   }
 
-  // mostra a primeira regra que falta (pula todas as já satisfeitas)
   message.style.color = "#ff00ff";
   message.textContent = validations[firstFailIndex].message;
   flashScreen();
 }
 
-// efeito de flash (mantive o seu estilo)
 function flashScreen() {
   body.style.backgroundColor = "#1a001f";
   box.style.boxShadow = "0 0 60px #ff00ff, 0 0 100px #ff00ff, 0 0 140px #ff00ff";
@@ -153,9 +147,8 @@ function flashScreen() {
   }, 200);
 }
 
-// animação final com contagem regressiva e redirecionamento
 function finalAnimation() {
-  let count = 60;
+  let count = 3;
   const message = document.getElementById('message');
   const interval = setInterval(() => {
     message.textContent = `✅ Tudo certo! Redirecionando em ${count}...`;
@@ -163,7 +156,6 @@ function finalAnimation() {
     count--;
     if (count < 0) {
       clearInterval(interval);
-      // redirecionamento final
       window.location.href = "proximaTela.html";
     }
   }, 1000);
