@@ -77,11 +77,10 @@
   </div>
 
 <script>
-let step = 0;
 const body = document.body;
 const box = document.getElementById('box');
 
-// 36 validações
+// Lista de 36 validações (mantive as mesmas regras que você tinha)
 const validations = [
   { check: pw => pw.length >= 5, message: "❌ Precisa ter no mínimo 5 caracteres" },
   { check: pw => /\p{Emoji}/u.test(pw), message: "❌ Precisa ter pelo menos 1 emoji" },
@@ -106,7 +105,7 @@ const validations = [
   { check: pw => pw.length % 2 === 0, message: "❌ Precisa ter número par de caracteres" },
   { check: pw => pw[0] !== pw[pw.length-1], message: "❌ Primeiro e último caractere não podem ser iguais" },
   { check: pw => /[!@#\$%\^&\*]/.test(pw), message: "❌ Precisa conter pelo menos 1 símbolo" },
-  { check: pw => pw.match(/./g).length > 0, message: "❌ Senha não pode estar vazia" },
+  { check: pw => pw.match(/./g)?.length > 0, message: "❌ Senha não pode estar vazia" },
   { check: pw => pw.includes("🌟"), message: "❌ Precisa conter o emoji 🌟" },
   { check: pw => pw.length >= 10, message: "❌ Precisa ter no mínimo 10 caracteres" },
   { check: pw => /\d{2}/.test(pw), message: "❌ Precisa conter pelo menos 2 números seguidos" },
@@ -119,31 +118,32 @@ const validations = [
   { check: pw => pw.includes("+"), message: "❌ Precisa conter +" },
   { check: pw => pw.includes("="), message: "❌ Precisa conter =" },
   { check: pw => /\d/.test(pw) && /[A-Z]/.test(pw) && /\p{Emoji}/u.test(pw), message: "❌ Precisa conter número, letra maiúscula e emoji" },
-  { check: pw => pw.includes("💜"), message: "❌ Precisa conter o emoji 💜" },
-  { check: pw => true, message: "✅ Tudo certo! Preparando animação final..." }
+  { check: pw => pw.includes("💜"), message: "❌ Precisa conter o emoji 💜" }
 ];
 
+// Função principal: encontra a primeira validação NÃO satisfeita.
+// Se nenhuma falhar -> sucesso
 function validatePassword() {
-  const password = document.getElementById('password').value;
+  const password = document.getElementById('password').value || "";
   const message = document.getElementById('message');
 
-  const validation = validations[step];
-  if(!validation.check(password)) {
-    message.textContent = validation.message;
-    flashScreen();
+  // encontra índice da primeira regra não satisfeita
+  const firstFailIndex = validations.findIndex(v => !v.check(password));
+
+  if (firstFailIndex === -1) {
+    // todas satisfeitas -> animação final / redireciona
+    message.style.color = "#00ffcc";
+    finalAnimation();
     return;
   }
 
-  step++;
-  const nextValidation = validations[step];
-  message.textContent = nextValidation.message;
+  // mostra a primeira regra que falta (pula todas as já satisfeitas)
+  message.style.color = "#ff00ff";
+  message.textContent = validations[firstFailIndex].message;
   flashScreen();
-
-  if(step === validations.length - 1) {
-    finalAnimation();
-  }
 }
 
+// efeito de flash (mantive o seu estilo)
 function flashScreen() {
   body.style.backgroundColor = "#1a001f";
   box.style.boxShadow = "0 0 60px #ff00ff, 0 0 100px #ff00ff, 0 0 140px #ff00ff";
@@ -153,6 +153,7 @@ function flashScreen() {
   }, 200);
 }
 
+// animação final com contagem regressiva e redirecionamento
 function finalAnimation() {
   let count = 3;
   const message = document.getElementById('message');
@@ -160,8 +161,9 @@ function finalAnimation() {
     message.textContent = `✅ Tudo certo! Redirecionando em ${count}...`;
     box.style.boxShadow = `0 0 ${30 + count*10}px #00ffff, 0 0 ${60 + count*10}px #ff00ff, 0 0 ${90 + count*10}px #00ff00`;
     count--;
-    if(count < 0) {
+    if (count < 0) {
       clearInterval(interval);
+      // redirecionamento final
       window.location.href = "proximaTela.html";
     }
   }, 1000);
